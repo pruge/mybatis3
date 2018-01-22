@@ -2,7 +2,7 @@
   "name": "mybatis3",
   "version": "0.1.8",
   "description": "mybatis3 mapper",
-  "main": "lib/library.js",
+  "main": "lib/library.min.js",
   "bin": {
     "cling": "./bin/cling.js"
   },
@@ -52,6 +52,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "jest": "^22.1.1",
     "uglify-es": "^3.3.4",
+    "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.10.0",
     "yargs": "^10.0.3"
   },

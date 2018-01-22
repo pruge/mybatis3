@@ -62,9 +62,13 @@ class Mybatis3 {
     // log.debug(this.sqlData)
   }
 
-  table(tableName) {
-    const sqlData = this.tables[tableName]
-    return this.getQuery(sqlData)
+  table(tableName, dir, xmls) {
+    if (xmls) {
+      this.loadQuery(tableName, dir, xmls)
+    } else {
+      const sqlData = this.tables[tableName]
+      return this.getQuery(sqlData)
+    }
   }
 
   /**

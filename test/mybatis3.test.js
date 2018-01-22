@@ -1,9 +1,9 @@
-import mybatis3 from '../lib/library'
+import mybatis3 from '../lib/library.min'
 import { join } from 'path'
 
 describe('parse xml, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['basic'])
+    mybatis3.table('Board', join(__dirname, '/xml'), ['basic'])
   })
 
   test('select', async () => {
@@ -48,7 +48,7 @@ describe('parse xml, output query string', () => {
 
 describe('if, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['if.xml'])
+    mybatis3.table('Board', join(__dirname, '/xml'), ['if.xml'])
   })
 
   test('if true', async () => {
@@ -76,7 +76,7 @@ describe('if, output query string', () => {
 
 describe('choose when otherwise, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['choose-when-otherwise.xml'])
+    mybatis3.table('Board', join(__dirname, '/xml'), ['choose-when-otherwise.xml'])
   })
 
   test('not match', async () => {
@@ -118,7 +118,7 @@ describe('choose when otherwise, output query string', () => {
 
 describe('trim where set, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['trim-where-set.xml'])
+    mybatis3.table('Board', join(__dirname, '/xml'), ['trim-where-set.xml'])
   })
 
   test('where, not match', async () => {
@@ -205,7 +205,7 @@ describe('trim where set, output query string', () => {
 
 describe('foreach, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['foreach.xml'])
+    mybatis3.table('Board', join(__dirname, '/xml'), ['foreach.xml'])
   })
 
   test('null array', async () => {
@@ -229,7 +229,7 @@ describe('foreach, output query string', () => {
 
 describe('bind, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['bind.xml'])
+    mybatis3.table('Board', join(__dirname, '/xml'), ['bind.xml'])
   })
 
   test('function', async () => {

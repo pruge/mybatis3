@@ -17,7 +17,7 @@ mybatis3 mapper
 ## Usage
 ```js
 var mybatis3 = require('mybatis3')
-mybatis3.loadQuery('tableName', 'path/to/xmls', [xmls])
+mybatis3.table('tableName', 'path/to/xmls', [xmls])
 
 const Board = mybatis3.table('tableName')
 Board.getList().then()
@@ -39,7 +39,7 @@ Board.getList().then()
 
 ```js
 var mybatis3 = require('mybatis3')
-mybatis3.loadQuery('Board', 'path/to/xmls', ['basic'])
+mybatis3.table('Board', 'path/to/xmls', ['basic'])
 
 var Board = mybatis3.table('Board')
 var params = {
