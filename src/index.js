@@ -1,7 +1,17 @@
 import xml2js from 'xml2js'
 import nodeEval from 'node-eval'
 import { readFileSync } from 'fs'
-import { forEach, find, chain, isEmpty, get, isArray, isObject, isFunction } from 'lodash'
+import {
+  forEach,
+  find,
+  chain,
+  isEmpty,
+  get,
+  isArray,
+  isObject,
+  partialRight,
+  isFunction
+} from 'lodash'
 import Promise from 'bluebird'
 import config from './config'
 import sqlstring from 'sqlstring'
@@ -19,6 +29,7 @@ const parser = new xml2js.Parser({
 
 class Mybatis3 {
   constructor() {
+    this.tablesRaw = []
     this.tables = []
     this.sqlData = {} // xml query
     this.references = [] // include가 정의된 array
@@ -34,6 +45,31 @@ class Mybatis3 {
     } else {
       return this.pool
     }
+  }
+
+  fnModel(name, conn) {
+    let ctx = {}
+    forEach(this.tables[name], (fn, key) => {
+      ctx[key] = partialRight(fn, conn)
+    })
+    return ctx
+  }
+
+  async transaction(execQuery) {
+    let connection, rst
+    try {
+      connection = await this.pool.getConnectionAsync()
+      connection.table = partialRight(this.fnModel, connection)
+      await connection.beginTransaction()
+      rst = await execQuery(connection)
+      await connection.commit()
+      connection.release()
+    } catch (e) {
+      await connection.rollback()
+      connection.release()
+      throw e
+    }
+    return rst
   }
 
   // loadQuery(path, idx) {
@@ -58,7 +94,7 @@ class Mybatis3 {
           .value()
       })
     })
-    this.tables[tableName] = this.sqlData
+    this.tablesRaw[tableName] = this.sqlData
     // log.debug(this.sqlData)
   }
 
@@ -66,15 +102,18 @@ class Mybatis3 {
     if (xmls) {
       this.loadQuery(tableName, dir, xmls)
     } else {
-      const sqlData = this.tables[tableName]
-      return this.getQuery(sqlData)
+      return this.getQuery(tableName)
     }
   }
 
   /**
    * query에 대한 function으로 반환 받기
    */
-  getQuery(sqlData) {
+  getQuery(tableName) {
+    if (this.tables[tableName]) {
+      return this.tables[tableName]
+    }
+    const sqlData = this.tablesRaw[tableName]
     let rst = {}
     forEach(sqlData, (sql, key) => {
       rst[key] = async (params, conn) => {
@@ -92,6 +131,7 @@ class Mybatis3 {
         }
       }
     })
+    this.tables[tableName] = rst
     return rst
   }
 

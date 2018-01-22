@@ -53,15 +53,24 @@ Board.insert(params).then(sql => console.log(sql))
 // INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE) VALUES ('test board', 'test', 'james kim', NOW())
 
 // 2. execute-1, auto release
-var conn = // mysql connection, has `query` method
+var conn = // mysql connection, has `query, release` method
 Board.insert(params, conn).then(data => console.log(data))
 // executed result
 
 // 3. execute-2
-var pool = // mysql connection pool
+var pool = // mysql connection pool, has `query` method
 mybatis3.setConnection(pool)
 Board.insert(params).then(data => console.log(data))
 // executed result
+
+// 4. transaction
+var pool = // mysql connection pool, has `getConnection` method
+mybatis3.setConnection(pool)
+mybatis3.transaction(async conn => {
+	const Board = conn.table('Board)
+	const data = await Board.getList()
+	return data
+}).then(data => console.log(data))
 ```
 
 ### more example
