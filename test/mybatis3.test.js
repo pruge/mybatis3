@@ -240,4 +240,13 @@ describe('bind, output query string', () => {
     // console.log(data)
     expect(data).toEqual('SELECT * FROM BLOG WHERE title LIKE \'%awesome%\'')
   })
+
+  test('null', async () => {
+    const Board = mybatis3.table('Board')
+
+    const params = {}
+    const data = await Board.selectBlogsLike(params)
+    // console.log(data)
+    expect(data).toEqual('SELECT * FROM BLOG WHERE title LIKE \'%undefined%\'')
+  })
 })

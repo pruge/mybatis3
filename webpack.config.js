@@ -1,31 +1,37 @@
 /* global __dirname, require, module */
 
-// const webpack = require('webpack')
-// const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
+const webpack = require('webpack')
+const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
 const path = require('path')
 const env = require('yargs').argv.env // use --env with webpack 2
 
 let libraryName = 'library'
 
-let plugins = []
-let outputFile
+let plugins = [],
+  outputFile
 
 if (env === 'build') {
-  // plugins.push(new UglifyJsPlugin({ minimize: true }))
+  plugins.push(new UglifyJsPlugin({ minimize: true }))
   outputFile = libraryName + '.min.js'
 } else {
   outputFile = libraryName + '.js'
 }
 
 const config = {
-  entry: path.join(__dirname, '/src/index.js'),
+  entry: __dirname + '/src/index.js',
   devtool: 'source-map',
   output: {
-    path: path.join(__dirname, '/lib'),
+    path: __dirname + '/lib',
     filename: outputFile,
     library: libraryName,
     libraryTarget: 'umd',
     umdNamedDefine: true
+  },
+  context: __dirname,
+  target: 'node',
+  node: {
+    //   __filename: true,
+    __dirname: false
   },
   module: {
     rules: [
@@ -40,12 +46,6 @@ const config = {
         exclude: /node_modules/
       }
     ]
-  },
-  context: __dirname,
-  target: 'node',
-  node: {
-    //   __filename: true,
-    __dirname: false
   },
   resolve: {
     alias: {

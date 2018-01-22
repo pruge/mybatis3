@@ -18,9 +18,11 @@ const parser = new xml2js.Parser({
 // const log = $log.getInstance('mybatis3')
 
 class Mybatis3 {
-  tables = []
-  sqlData = {} // xml query
-  references = [] // include가 정의된 array
+  constructor() {
+    this.tables = []
+    this.sqlData = {} // xml query
+    this.references = [] // include가 정의된 array
+  }
 
   setConnection(pool) {
     this.pool = pool
