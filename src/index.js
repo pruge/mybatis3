@@ -6,7 +6,7 @@ import Promise from 'bluebird'
 import config from './config'
 import sqlstring from 'sqlstring'
 import { join, extname } from 'path'
-import $log from './log'
+// import $log from './log'
 const parser = new xml2js.Parser({
   trim: true,
   normalize: true,
@@ -15,7 +15,7 @@ const parser = new xml2js.Parser({
   explicitCharkey: true,
   charsAsChildren: true
 })
-const log = $log.getInstance('mybatis3')
+// const log = $log.getInstance('mybatis3')
 
 class Mybatis3 {
   tables = []
@@ -112,7 +112,7 @@ class Mybatis3 {
   }
 
   async processInclude(item, params) {
-    log.info('--- process include')
+    // log.info('--- process include')
     const id = item.$.refid
     const t = find(this.references, { $: { id: id } })
     if (!t) {
@@ -124,7 +124,7 @@ class Mybatis3 {
   }
 
   async processDeep(xml, params) {
-    log.info('--- process deep')
+    // log.info('--- process deep')
     // log.debug(xml)
     const keys = Object.keys(xml).filter(key => !/_|\${1,2}|#name/.test(key))
     if (keys.length !== 0) {
@@ -133,7 +133,7 @@ class Mybatis3 {
   }
 
   async processIf(item, params) {
-    log.info('--- process if')
+    // log.info('--- process if')
     const test = await this.processVariable(item.$.test, params).then(this.changeAndOr)
     if (nodeEval(test)) {
       await this.processDeep(item, params)
@@ -144,7 +144,7 @@ class Mybatis3 {
   }
 
   async processChoose(item, params) {
-    log.info('--- process Choose')
+    // log.info('--- process Choose')
     // log.debug(item, 'item')
     await Promise.each(item['$$'], async _case => {
       // log.debug(_case, '_case')
@@ -167,7 +167,7 @@ class Mybatis3 {
   }
 
   async processTrim(item, params) {
-    log.info('--- process trim')
+    // log.info('--- process trim')
     // log.debug(item, 'item')
     await Promise.each(item['$$'], async _case => {
       // log.debug(_case, '_case')
@@ -189,7 +189,7 @@ class Mybatis3 {
   }
 
   async processWhere(item, params) {
-    log.info('--- process where')
+    // log.info('--- process where')
     // log.debug(item, 'item')
     await Promise.each(item['$$'], async _case => {
       // log.debug(_case, '_case')
@@ -212,7 +212,7 @@ class Mybatis3 {
   }
 
   async processSet(item, params) {
-    log.info('--- process set')
+    // log.info('--- process set')
     // log.debug(item, 'item')
     await Promise.each(item['$$'], async _case => {
       // log.debug(_case, '_case')
@@ -235,7 +235,7 @@ class Mybatis3 {
   }
 
   async processForeach(item, params) {
-    log.info('--- process foreach')
+    // log.info('--- process foreach')
     // log.debug(item, 'item')
     await this.processDeep(item, params)
     const collection = get(params, item.$.collection) || []
@@ -257,7 +257,7 @@ class Mybatis3 {
   }
 
   async processBind(item, params) {
-    log.info('--- process bind')
+    // log.info('--- process bind')
     // log.debug(item, 'item')
     const s = await this.processVariable(item.$.value, params).then(this.changeAndOr)
     params[item.$.name] = nodeEval(s)

@@ -1,4 +1,4 @@
-import mybatis3 from '../src'
+import mybatis3 from '../lib/library'
 import { join } from 'path'
 
 describe('parse xml, output query string', () => {

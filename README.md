@@ -15,7 +15,7 @@ mybatis3 mapper
 * bind
 
 ## Usage
-```
+```js
 var mybatis3 = require('mybatis3')
 mybatis3.loadQuery('tableName', 'path/to/xmls', [xmls])
 
@@ -65,3 +65,4 @@ Board.insert(params).then(data => console.log(data))
 
 ### more example
 see test
+[https://github.com/pruge/mybatis3/tree/master/test](https://github.com/pruge/mybatis3/tree/master/test)
