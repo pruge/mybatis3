@@ -6,10 +6,10 @@ import {
   find,
   chain,
   isEmpty,
+  partialRight,
   get,
   isArray,
   isObject,
-  partialRight,
   isFunction
 } from 'lodash'
 import Promise from 'bluebird'
@@ -49,7 +49,8 @@ class Mybatis3 {
 
   fnModel(name, conn) {
     let ctx = {}
-    forEach(this.tables[name], (fn, key) => {
+    const table = this.table(name)
+    forEach(table, (fn, key) => {
       ctx[key] = partialRight(fn, conn)
     })
     return ctx
@@ -95,6 +96,7 @@ class Mybatis3 {
       })
     })
     this.tablesRaw[tableName] = this.sqlData
+    delete this.tables[tableName]
     // log.debug(this.sqlData)
   }
 
@@ -110,9 +112,8 @@ class Mybatis3 {
    * query에 대한 function으로 반환 받기
    */
   getQuery(tableName) {
-    if (this.tables[tableName]) {
-      return this.tables[tableName]
-    }
+    if (this.tables[tableName]) return this.tables[tableName]
+
     const sqlData = this.tablesRaw[tableName]
     let rst = {}
     forEach(sqlData, (sql, key) => {
@@ -131,6 +132,7 @@ class Mybatis3 {
         }
       }
     })
+
     this.tables[tableName] = rst
     return rst
   }
