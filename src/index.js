@@ -5,7 +5,7 @@ import { forEach, find, chain, isEmpty, get, isArray, isObject, isFunction } fro
 import Promise from 'bluebird'
 import config from './config'
 import sqlstring from 'sqlstring'
-import { join } from 'path'
+import { join, extname } from 'path'
 import $log from './log'
 const parser = new xml2js.Parser({
   trim: true,
@@ -18,6 +18,7 @@ const parser = new xml2js.Parser({
 const log = $log.getInstance('mybatis3')
 
 class Mybatis3 {
+  tables = []
   sqlData = {} // xml query
   references = [] // include가 정의된 array
 
@@ -34,11 +35,12 @@ class Mybatis3 {
   }
 
   // loadQuery(path, idx) {
-  loadQuery(path, xmlFilenames) {
+  loadQuery(tableName, path, xmlFilenames) {
     forEach(xmlFilenames, (filename, idx) => {
       this.sqlData = idx === 0 ? {} : this.sqlData
-
-      const xml = readFileSync(join(path, filename), 'utf-8')
+      const ext = extname(filename)
+      const dir = ext ? join(path, filename) : join(path, filename + '.xml')
+      const xml = readFileSync(dir, 'utf-8')
       // log.debug('xmls', xml)
       parser.parseString(xml, (err, data) => {
         if (err) {
@@ -54,23 +56,29 @@ class Mybatis3 {
           .value()
       })
     })
+    this.tables[tableName] = this.sqlData
     // log.debug(this.sqlData)
+  }
+
+  table(tableName) {
+    const sqlData = this.tables[tableName]
+    return this.getQuery(sqlData)
   }
 
   /**
    * query에 대한 function으로 반환 받기
    */
-  getQuery() {
+  getQuery(sqlData) {
     let rst = {}
-    forEach(this.sqlData, (sql, key) => {
+    forEach(sqlData, (sql, key) => {
       rst[key] = async (params, conn) => {
-        const qry = await this.process(this.sqlData[key], params)
+        const qry = await this.process(sqlData[key], params)
           .then(xml => this.processVariable(xml._, params))
           .catch(err => console.error(err.stack.red))
 
         const _conn = this.getConnection()
         if (conn) {
-          return conn.query(qry)
+          return conn.query(qry).finally(() => conn.release())
         } else if (_conn) {
           return _conn.query(qry)
         } else {
@@ -118,10 +126,6 @@ class Mybatis3 {
   async processDeep(xml, params) {
     log.info('--- process deep')
     // log.debug(xml)
-    // const keys = Object.keys(xml).filter(key => {
-    //   log.debug(key, !/_|\${1,2}|#name/.test(key))
-    //   return !/_|\${1,2}|#name/.test(key)
-    // })
     const keys = Object.keys(xml).filter(key => !/_|\${1,2}|#name/.test(key))
     if (keys.length !== 0) {
       await this.process(xml, params)

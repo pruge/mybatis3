@@ -3,18 +3,18 @@ import { join } from 'path'
 
 describe('parse xml, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery(join(__dirname, '/xml'), ['basic.xml'])
+    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['basic'])
   })
 
   test('select', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const data = await Board.getList()
     expect(data).toEqual('SELECT * FROM TBL_BOARD')
   })
 
   test('insert', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = {
       brdtitle: 'test board',
@@ -28,7 +28,7 @@ describe('parse xml, output query string', () => {
   })
 
   test('update', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { brdtitle: 'test board', brdmemo: 'test', brdwriter: 'james kim' }
     const data = await Board.update(params)
@@ -38,7 +38,7 @@ describe('parse xml, output query string', () => {
   })
 
   test('delete', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { brdno: 1 }
     const data = await Board.delete(params)
@@ -48,11 +48,11 @@ describe('parse xml, output query string', () => {
 
 describe('if, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery(join(__dirname, '/xml'), ['if.xml'])
+    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['if.xml'])
   })
 
   test('if true', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { brdtitle: 'test board', brdmemo: 'test', brdwriter: 'james kim' }
     const data = await Board.insert(params)
@@ -63,7 +63,7 @@ describe('if, output query string', () => {
   })
 
   test('if false', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { brdtitle: 'test board', brdmemo: 'test', brdwriter: 'james kim', cnt: 10 }
     const data = await Board.insert(params)
@@ -76,11 +76,11 @@ describe('if, output query string', () => {
 
 describe('choose when otherwise, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery(join(__dirname, '/xml'), ['choose-when-otherwise.xml'])
+    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['choose-when-otherwise.xml'])
   })
 
   test('not match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = {}
     const data = await Board.getList(params)
@@ -89,7 +89,7 @@ describe('choose when otherwise, output query string', () => {
   })
 
   test('one match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { title: 'good job' }
     const data = await Board.getList(params)
@@ -98,7 +98,7 @@ describe('choose when otherwise, output query string', () => {
   })
 
   test('two match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { title: 'good job', author: { name: 'pruge' } }
     const data = await Board.getList(params)
@@ -107,7 +107,7 @@ describe('choose when otherwise, output query string', () => {
   })
 
   test('second match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { author: { name: 'pruge' } }
     const data = await Board.getList(params)
@@ -118,11 +118,11 @@ describe('choose when otherwise, output query string', () => {
 
 describe('trim where set, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery(join(__dirname, '/xml'), ['trim-where-set.xml'])
+    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['trim-where-set.xml'])
   })
 
   test('where, not match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = {}
     const data = await Board.getList(params)
@@ -131,7 +131,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('where, one match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { state: true }
     const data = await Board.getList(params)
@@ -140,7 +140,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('where, last one match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { author: { name: 'pruge' } }
     const data = await Board.getList(params)
@@ -149,7 +149,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('trim, not match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = {}
     const data = await Board.getList2(params)
@@ -158,7 +158,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('trim, one match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { state: true }
     const data = await Board.getList2(params)
@@ -167,7 +167,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('trim, last one match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { author: { name: 'pruge' } }
     const data = await Board.getList2(params)
@@ -176,7 +176,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('set, not match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { id: 3 }
     const data = await Board.updateAuthorIfNecessary(params)
@@ -185,7 +185,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('set, one match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { id: 3, email: 'pruge@gmail.com' }
     const data = await Board.updateAuthorIfNecessary(params)
@@ -194,7 +194,7 @@ describe('trim where set, output query string', () => {
   })
 
   test('set, many match', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { id: 3, email: 'pruge@gmail.com', bio: 'man' }
     const data = await Board.updateAuthorIfNecessary(params)
@@ -205,11 +205,11 @@ describe('trim where set, output query string', () => {
 
 describe('foreach, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery(join(__dirname, '/xml'), ['foreach.xml'])
+    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['foreach.xml'])
   })
 
   test('null array', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = {}
     const data = await Board.selectPostIn(params)
@@ -218,7 +218,7 @@ describe('foreach, output query string', () => {
   })
 
   test('array', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { list: [1, 2, 3] }
     const data = await Board.selectPostIn(params)
@@ -229,11 +229,11 @@ describe('foreach, output query string', () => {
 
 describe('bind, output query string', () => {
   beforeEach(() => {
-    mybatis3.loadQuery(join(__dirname, '/xml'), ['bind.xml'])
+    mybatis3.loadQuery('Board', join(__dirname, '/xml'), ['bind.xml'])
   })
 
   test('function', async () => {
-    const Board = mybatis3.getQuery()
+    const Board = mybatis3.table('Board')
 
     const params = { blog: { getTitle: () => 'awesome' } }
     const data = await Board.selectBlogsLike(params)
