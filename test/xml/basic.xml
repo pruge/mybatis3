@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<query>
+	<sql id="includeWhere">
+		WHERE id=:brdno
+	</sql>
+	<sql id="includeWhere2">
+		WHERE id=:brdno
+	</sql>
+	<select id="getList">
+		SELECT * FROM TBL_BOARD
+	</select>
+	<insert id="insert">
+		INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE)
+		VALUES (:brdtitle, :brdmemo, :brdwriter, NOW())
+	</insert>
+	<update id="update">
+		UPDATE TBL_BOARD
+		SET BRDTITLE=:brdtitle, BRDMEMO=:brdmemo, BRDWRITER=:brdwriter
+	</update>
+	<delete id="delete">
+		DELETE FROM TBL_BOARD
+		<include refid="includeWhere" />
+	</delete>
+</query>

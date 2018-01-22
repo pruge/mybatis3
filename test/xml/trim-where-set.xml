@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<query>
+	<select id="getList">
+		SELECT * FROM BLOG
+		<where>
+			<if test=":state != null">
+				state = :state
+			</if>
+			<if test=":title != null">
+				AND title like :title
+			</if>
+			<if test=":author != null and :author.name != null">
+				AND author_name like :author.name
+			</if>
+		</where>
+	</select>
+	<select id="getList2">
+		SELECT * FROM BLOG
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test=":state != null">
+				state = :state
+			</if>
+			<if test=":title != null">
+				AND title like :title
+			</if>
+			<if test=":author != null and :author.name != null">
+				AND author_name like :author.name
+			</if>
+		</trim>
+	</select>
+	<update id="updateAuthorIfNecessary">
+		update Author
+		<set>
+			<if test=":username != null">
+				username=:username,
+			</if>
+			<if test=":password != null">
+				password=:password,
+			</if>
+			<if test=":email != null">
+				email=:email,
+			</if>
+			<if test=":bio != null">
+				bio=:bio
+			</if>
+		</set>
+		where id=:id
+	</update>
+</query>

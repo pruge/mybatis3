@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<query>
+	<sql id="includeWhere">
+		WHERE id=:brdno
+	</sql>
+	<select id="selectPostIn">
+		SELECT *
+		FROM POST P
+		WHERE ID in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			:item
+		</foreach>
+	</select>
+</query>

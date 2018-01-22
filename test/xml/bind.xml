@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<query>
+	<select id="selectBlogsLike">
+		<bind name="pattern" value="'%' + :blog.getTitle() + '%'" />
+		SELECT * FROM BLOG
+		WHERE title LIKE :pattern
+	</select>
+</query>

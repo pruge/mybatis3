@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<query>
+	<select id="getList">
+		SELECT * FROM BLOG WHERE state = ‘ACTIVE’
+		<choose>
+			<when test=":title != null">
+				AND title like :title
+			</when>
+			<when test=":author != null and :author.name != null">
+				AND author_name like :author.name
+			</when>
+			<otherwise>
+				AND featured = 1
+			</otherwise>
+		</choose>
+	</select>
+</query>

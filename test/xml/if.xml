@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<query>
+	<insert id="insert">
+		INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE)
+		VALUES (:brdtitle, :brdmemo, :brdwriter, NOW())
+		<if test=":cnt === 0 || :cnt === undefined">
+			ORDER BY created DESC
+		</if>
+		<if test=":cnt === 1">
+			ORDER BY created DESC
+		</if>
+		<if test=":cnt === 2">
+			ORDER BY created DESC
+		</if>
+		TEST
+	</insert>
+</query>
