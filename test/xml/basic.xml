@@ -9,9 +9,16 @@
 	<select id="getList">
 		SELECT * FROM TBL_BOARD
 	</select>
+	<select id="getList2">
+		SELECT * FROM posts
+	</select>
 	<insert id="insert">
 		INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE)
 		VALUES (:brdtitle, :brdmemo, :brdwriter, NOW())
+	</insert>
+	<insert id="insertBoard">
+		INSERT INTO posts(subject, user_id, user_name)
+		VALUES (:subject, :user_id, :user_name)
 	</insert>
 	<update id="update">
 		UPDATE TBL_BOARD

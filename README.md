@@ -54,21 +54,23 @@ Board.insert(params).then(sql => console.log(sql))
 
 // 2. execute-1, auto release
 var conn = // mysql connection, has `query, release` method
-Board.insert(params, conn).then(data => console.log(data))
-// executed result
+Board.insert(params, conn).then(data => console.log(data)) // executed result
+Board.lastQuery // can access last query by `lastQuery` getter
+
 
 // 3. execute-2
 var pool = // mysql connection pool, has `query` method
 mybatis3.setConnection(pool)
-Board.insert(params).then(data => console.log(data))
-// executed result
+Board.insert(params).then(data => console.log(data)) // executed result
+Board.lastQuery // can access last query by `lastQuery` getter
 
 // 4. transaction
 var pool = // mysql connection pool, has `getConnection` method
 mybatis3.setConnection(pool)
 mybatis3.transaction(async conn => {
-	const Board = conn.table('Board)
+	const Board = conn.table('Board')
 	const data = await Board.getList()
+	Board.lastQuery // can access last query by `lastQuery` getter
 	return data
 }).then(data => console.log(data))
 ```

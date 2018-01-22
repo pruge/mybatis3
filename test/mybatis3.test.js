@@ -1,4 +1,4 @@
-import mybatis3 from '../lib/library.min'
+import mybatis3 from '../lib/library'
 import { join } from 'path'
 
 describe('parse xml, output query string', () => {
@@ -23,7 +23,13 @@ describe('parse xml, output query string', () => {
     }
     const data = await Board.insert(params)
     expect(data).toEqual(
-      'INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE) VALUES (\'test board\', \'test\', \'james kim\', NOW())'
+      "INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE ) VALUES ('test board', 'test', 'james kim', NOW() )"
+    )
+
+    const params2 = { subject: 'test', user_id: 'pruge', user_name: 'james' }
+    const data2 = await Board.insertBoard(params2)
+    expect(data2).toEqual(
+      "INSERT INTO posts(subject, user_id, user_name ) VALUES ('test', 'pruge', 'james' )"
     )
   })
 
@@ -33,7 +39,7 @@ describe('parse xml, output query string', () => {
     const params = { brdtitle: 'test board', brdmemo: 'test', brdwriter: 'james kim' }
     const data = await Board.update(params)
     expect(data).toEqual(
-      'UPDATE TBL_BOARD SET BRDTITLE=\'test board\', BRDMEMO=\'test\', BRDWRITER=\'james kim\''
+      "UPDATE TBL_BOARD SET BRDTITLE='test board', BRDMEMO='test', BRDWRITER='james kim'"
     )
   })
 
@@ -58,7 +64,7 @@ describe('if, output query string', () => {
     const data = await Board.insert(params)
     // console.log(data)
     expect(data).toEqual(
-      'INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE) VALUES (\'test board\', \'test\', \'james kim\', NOW()) ORDER BY created DESC TEST'
+      "INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE ) VALUES ('test board', 'test', 'james kim', NOW() ) ORDER BY created DESC TEST"
     )
   })
 
@@ -69,7 +75,7 @@ describe('if, output query string', () => {
     const data = await Board.insert(params)
     // console.log(data)
     expect(data).toEqual(
-      'INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE) VALUES (\'test board\', \'test\', \'james kim\', NOW()) TEST'
+      "INSERT INTO TBL_BOARD(BRDTITLE, BRDMEMO, BRDWRITER, BRDDATE ) VALUES ('test board', 'test', 'james kim', NOW() ) TEST"
     )
   })
 })
@@ -94,7 +100,7 @@ describe('choose when otherwise, output query string', () => {
     const params = { title: 'good job' }
     const data = await Board.getList(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE state = ‘ACTIVE’ AND title like \'good job\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE state = ‘ACTIVE’ AND title like 'good job'")
   })
 
   test('two match', async () => {
@@ -103,7 +109,7 @@ describe('choose when otherwise, output query string', () => {
     const params = { title: 'good job', author: { name: 'pruge' } }
     const data = await Board.getList(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE state = ‘ACTIVE’ AND title like \'good job\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE state = ‘ACTIVE’ AND title like 'good job'")
   })
 
   test('second match', async () => {
@@ -112,7 +118,7 @@ describe('choose when otherwise, output query string', () => {
     const params = { author: { name: 'pruge' } }
     const data = await Board.getList(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE state = ‘ACTIVE’ AND author_name like \'pruge\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE state = ‘ACTIVE’ AND author_name like 'pruge'")
   })
 })
 
@@ -145,7 +151,7 @@ describe('trim where set, output query string', () => {
     const params = { author: { name: 'pruge' } }
     const data = await Board.getList(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE author_name like \'pruge\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE author_name like 'pruge'")
   })
 
   test('trim, not match', async () => {
@@ -172,7 +178,7 @@ describe('trim where set, output query string', () => {
     const params = { author: { name: 'pruge' } }
     const data = await Board.getList2(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE author_name like \'pruge\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE author_name like 'pruge'")
   })
 
   test('set, not match', async () => {
@@ -190,7 +196,7 @@ describe('trim where set, output query string', () => {
     const params = { id: 3, email: 'pruge@gmail.com' }
     const data = await Board.updateAuthorIfNecessary(params)
     // console.log(data)
-    expect(data).toEqual('update Author SET email=\'pruge@gmail.com\' where id=3')
+    expect(data).toEqual("update Author SET email='pruge@gmail.com' where id=3")
   })
 
   test('set, many match', async () => {
@@ -199,7 +205,7 @@ describe('trim where set, output query string', () => {
     const params = { id: 3, email: 'pruge@gmail.com', bio: 'man' }
     const data = await Board.updateAuthorIfNecessary(params)
     console.log(data)
-    expect(data).toEqual('update Author SET email=\'pruge@gmail.com\', bio=\'man\' where id=3')
+    expect(data).toEqual("update Author SET email='pruge@gmail.com', bio='man' where id=3")
   })
 })
 
@@ -238,7 +244,7 @@ describe('bind, output query string', () => {
     const params = { blog: { getTitle: () => 'awesome' } }
     const data = await Board.selectBlogsLike(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE title LIKE \'%awesome%\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE title LIKE '%awesome%'")
   })
 
   test('null', async () => {
@@ -247,6 +253,6 @@ describe('bind, output query string', () => {
     const params = {}
     const data = await Board.selectBlogsLike(params)
     // console.log(data)
-    expect(data).toEqual('SELECT * FROM BLOG WHERE title LIKE \'%undefined%\'')
+    expect(data).toEqual("SELECT * FROM BLOG WHERE title LIKE '%undefined%'")
   })
 })

@@ -31,12 +31,14 @@ class Mybatis3 {
   constructor() {
     this.tablesRaw = []
     this.tables = []
-    this.sqlData = {} // xml query
+    this.lastQuery = {}
+    this.sqlData = {} // xml raw query
     this.references = [] // include가 정의된 array
   }
 
   setConnection(pool) {
     this.pool = pool
+    this.pool.getConnectionAsync = Promise.promisify(this.pool.getConnection)
   }
 
   getConnection() {
@@ -49,9 +51,16 @@ class Mybatis3 {
 
   fnModel(name, conn) {
     let ctx = {}
-    const table = this.table(name)
+    const table = this.getQuery(name)
+    const self = this
     forEach(table, (fn, key) => {
-      ctx[key] = partialRight(fn, conn)
+      if (key === 'lastQuery') {
+        Object.defineProperty(ctx, key, {
+          get: () => self.lastQuery[name]
+        })
+      } else {
+        ctx[key] = partialRight(fn, conn)
+      }
     })
     return ctx
   }
@@ -60,7 +69,7 @@ class Mybatis3 {
     let connection, rst
     try {
       connection = await this.pool.getConnectionAsync()
-      connection.table = partialRight(this.fnModel, connection)
+      connection.table = partialRight(this.fnModel, connection).bind(this)
       await connection.beginTransaction()
       rst = await execQuery(connection)
       await connection.commit()
@@ -108,19 +117,27 @@ class Mybatis3 {
     }
   }
 
+  model() {}
+
   /**
    * query에 대한 function으로 반환 받기
    */
   getQuery(tableName) {
     if (this.tables[tableName]) return this.tables[tableName]
-
+    const self = this
     const sqlData = this.tablesRaw[tableName]
-    let rst = {}
+    let rst = {
+      get lastQuery() {
+        return self.lastQuery[tableName]
+      }
+    }
     forEach(sqlData, (sql, key) => {
       rst[key] = async (params, conn) => {
         const qry = await this.process(sqlData[key], params)
           .then(xml => this.processVariable(xml._, params))
           .catch(err => console.error(err.stack.red))
+
+        this.lastQuery[tableName] = qry
 
         const _conn = this.getConnection()
         if (conn) {
@@ -133,6 +150,8 @@ class Mybatis3 {
       }
     })
 
+    // rst.getQuery = () => rst.query
+    // console.log(rst)
     this.tables[tableName] = rst
     return rst
   }
@@ -319,16 +338,19 @@ class Mybatis3 {
 
     const escape = sqlstring.escape
     const reg = config.sql.queryFormat ? new RegExp(config.sql.queryFormat, 'g') : /#{([\w_.]+)}/g
-    rst = qry.replace(reg, function (txt, key) {
-      key = key.replace(/\(\)/g, '')
-      let val = get(params, key)
-      if (isFunction(val)) {
-        val = val()
-      } else if (isObject(val) || isArray(val)) {
-        val = true
-      }
-      return escape(val, config.sql.stringifyObjects, config.sql.timezone)
-    })
+    rst = qry
+      .replace(/\)/g, ' )')
+      .replace(/\( \)/g, '()')
+      .replace(reg, (txt, key) => {
+        key = key.replace(/\(\)/g, '')
+        let val = get(params, key)
+        if (isFunction(val)) {
+          val = val()
+        } else if (isObject(val) || isArray(val)) {
+          val = true
+        }
+        return escape(val, config.sql.stringifyObjects, config.sql.timezone)
+      })
     return rst
       .replace(/^\s+|\s+$/g, '')
       .replace(/\s+/g, ' ')
