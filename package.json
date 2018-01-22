@@ -21,6 +21,10 @@
     "umd",
     "commonjs"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pruge/mybatis3.git"
+  },
   "jest": {
     "moduleNameMapper": {
       "@/(.*)$": "<rootDir>/src/$1",
