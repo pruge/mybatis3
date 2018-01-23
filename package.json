@@ -1,6 +1,6 @@
 {
   "name": "mybatis3",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "mybatis3 mapper",
   "main": "lib/library.min.js",
   "bin": {
