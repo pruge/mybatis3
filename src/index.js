@@ -92,7 +92,7 @@ class Mybatis3 {
       // log.debug('xmls', xml)
       parser.parseString(xml, (err, data) => {
         if (err) {
-          return console.error(err.stack.red || err)
+          return console.error(err.stack || err)
         }
         const jsonData = data.query
         this.references = jsonData.sql
@@ -135,17 +135,22 @@ class Mybatis3 {
       rst[key] = async (params, conn) => {
         const qry = await this.process(sqlData[key], params)
           .then(xml => this.processVariable(xml._, params))
-          .catch(err => console.error(err.stack.red))
+          .catch(err => console.error(err.stack))
 
-        this.lastQuery[tableName] = qry
+        self.lastQuery[tableName] = qry
 
-        const _conn = this.getConnection()
         if (conn) {
+          console.log(1)
           return conn.query(qry).finally(() => conn.release())
-        } else if (_conn) {
-          return _conn.query(qry)
         } else {
-          return qry
+          const _conn = this.getConnection()
+          if (_conn) {
+            console.log(2)
+            return _conn.query(qry)
+          } else {
+            console.log(3)
+            return qry
+          }
         }
       }
     })
