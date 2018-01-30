@@ -140,23 +140,18 @@ class Mybatis3 {
         self.lastQuery[tableName] = qry
 
         if (conn) {
-          console.log(1)
           return conn.query(qry).finally(() => conn.release())
         } else {
           const _conn = this.getConnection()
           if (_conn) {
-            console.log(2)
             return _conn.query(qry)
           } else {
-            console.log(3)
             return qry
           }
         }
       }
     })
 
-    // rst.getQuery = () => rst.query
-    // console.log(rst)
     this.tables[tableName] = rst
     return rst
   }
