@@ -117,7 +117,7 @@ class Mybatis3 {
     }
   }
 
-  model() {}
+  model() { }
 
   /**
    * query에 대한 function으로 반환 받기

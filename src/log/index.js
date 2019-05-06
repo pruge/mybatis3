@@ -73,7 +73,7 @@ class LoggerPino {
   }
 
   getInstance(namespace) {
-    const child = this.logger.child({name: namespace})
+    const child = this.logger.child({ name: namespace })
     child.level = config.log.map[namespace] || config.log.map['*']
     if (config.log.traceLinenumber) {
       forEach(this.types, (type) => {
@@ -94,7 +94,7 @@ class LoggerPino {
       // console.log(args)
       if (!isObjectLike(args[0])) {
         // console.log(1)
-        args.splice(0, 0, {file: self.analyze(3)})
+        args.splice(0, 0, { file: self.analyze(3) })
       } else if (!args[0].isBoom && !(args[0] instanceof Error)) {
         // console.log(2)
         args[0] = {
