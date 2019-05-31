@@ -26,6 +26,13 @@ Board.getList().then()
 ## example
 
 ### insert
+```
+// Read files in custom folders
+ .
+ ├── xmls
+ │     └── basic.xml
+ └── app.js
+```
 ```xml
 // basic.xml
 <?xml version="1.0"?>
