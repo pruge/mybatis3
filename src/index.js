@@ -50,7 +50,7 @@ class Mybatis3 {
   }
 
   fnModel(name, conn) {
-    let ctx = {}
+    const ctx = {}
     const table = this.getQuery(name)
     const self = this
     forEach(table, (fn, key) => {
@@ -126,7 +126,7 @@ class Mybatis3 {
     if (this.tables[tableName]) return this.tables[tableName]
     const self = this
     const sqlData = this.tablesRaw[tableName]
-    let rst = {
+    const rst = {
       get lastQuery() {
         return self.lastQuery[tableName]
       }
@@ -161,7 +161,7 @@ class Mybatis3 {
     return Promise.resolve(xml).then(async xml => {
       // process xml.$$
       xml._ = ''
-      await Promise.each(xml['$$'], async item => {
+      await Promise.each(xml.$$, async item => {
         // log.debug(item)
         if (item['#name'] === '__text__') {
         } else {
@@ -213,7 +213,7 @@ class Mybatis3 {
   async processChoose(item, params) {
     // log.info('--- process Choose')
     // log.debug(item, 'item')
-    await Promise.each(item['$$'], async _case => {
+    await Promise.each(item.$$, async _case => {
       // log.debug(_case, '_case')
       const testStr = get(_case, '$.test')
       if (testStr) {
@@ -236,7 +236,7 @@ class Mybatis3 {
   async processTrim(item, params) {
     // log.info('--- process trim')
     // log.debug(item, 'item')
-    await Promise.each(item['$$'], async _case => {
+    await Promise.each(item.$$, async _case => {
       // log.debug(_case, '_case')
       const testStr = get(_case, '$.test')
       if (testStr) {
@@ -258,7 +258,7 @@ class Mybatis3 {
   async processWhere(item, params) {
     // log.info('--- process where')
     // log.debug(item, 'item')
-    await Promise.each(item['$$'], async _case => {
+    await Promise.each(item.$$, async _case => {
       // log.debug(_case, '_case')
       const testStr = get(_case, '$.test')
       if (testStr) {
@@ -281,7 +281,7 @@ class Mybatis3 {
   async processSet(item, params) {
     // log.info('--- process set')
     // log.debug(item, 'item')
-    await Promise.each(item['$$'], async _case => {
+    await Promise.each(item.$$, async _case => {
       // log.debug(_case, '_case')
       const testStr = get(_case, '$.test')
       if (testStr) {
@@ -306,7 +306,7 @@ class Mybatis3 {
     // log.debug(item, 'item')
     await this.processDeep(item, params)
     const collection = get(params, item.$.collection) || []
-    let processedArr = []
+    const processedArr = []
     // log.debug(collection, 'collection')
     await Promise.each(collection, async (col, idx) => {
       const qry = await this.processVariable(item._, {
@@ -383,8 +383,8 @@ class Mybatis3 {
   }
 
   merge_(xml, choose) {
-    let processedArr = []
-    forEach(xml['$$'], item => {
+    const processedArr = []
+    forEach(xml.$$, item => {
       if (item._) {
         processedArr.push(item._)
 

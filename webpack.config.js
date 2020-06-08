@@ -1,24 +1,30 @@
 /* global __dirname, require, module */
 
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const path = require('path')
 const env = require('yargs').argv.env // use --env with webpack 2
+// const Dotenv = require('dotenv-webpack');
+const nodeExternals = require('webpack-node-externals');
+const WebpackSourceMapSupport = require('webpack-source-map-support');
 
 let libraryName = 'library'
 
-let plugins = []
-let outputFile
+// let plugins = []
+let outputFile, mode
 
 if (env === 'build') {
-  plugins.push(new UglifyJsPlugin())
+  mode = 'production';
+  // plugins.push(new UglifyJsPlugin())
   outputFile = libraryName + '.min.js'
 } else {
+  mode = 'development';
   outputFile = libraryName + '.js'
 }
 
 const config = {
+  mode: mode,
   entry: path.join(__dirname, '/src/index.js'),
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   output: {
     path: path.join(__dirname, '/lib'),
     filename: outputFile,
@@ -46,6 +52,7 @@ const config = {
       }
     ]
   },
+  externals: [nodeExternals()],
   resolve: {
     alias: {
       '@': path.join(__dirname, '/src'),
@@ -55,7 +62,8 @@ const config = {
     modules: [path.resolve('./node_modules'), path.resolve('./src')],
     extensions: ['.json', '.js']
   },
-  plugins: plugins
+  // plugins: plugins
+  plugins: [new WebpackSourceMapSupport()]
 }
 
 module.exports = config
