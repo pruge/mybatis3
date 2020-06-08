@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import mybatis3 from '../lib/library'
 import { join } from 'path'
 
